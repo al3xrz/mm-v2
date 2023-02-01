@@ -30,19 +30,21 @@ class Zabbix {
 
   async logout() {
     try {
-      await axios.post(this.uri, {
+      const result = await axios.post(this.uri, {
         jsonrpc: "2.0",
         method: "user.logout",
         params: [],
         id: 1,
         auth: this.apiKey,
       });
+      console.log(result.data)
     } catch (e) {
       console.log(e.message);
       throw new Error("error in ZABBIX_LOGOUT_ERROR");
     }
   }
 
+  // base section
   async getGroupID(groupName) {
     try {
       const result = await axios.post(this.uri, {
@@ -80,6 +82,7 @@ class Zabbix {
             "url_a",
           ],
           selectItems: [
+            "itemid",
             "key_",
             "name",
             "status",
@@ -177,6 +180,36 @@ class Zabbix {
     }
   }
 
+  async getGroupInfo(groupName) {
+    try {
+      const id = await this.getGroupID(groupName);
+      const hosts = await this.getHosts(id);
+      const triggers = await this.getTriggers(id);
+      const problems = await this.getProblems(id);
+
+      for (const trigger of triggers) {
+        trigger.problem = problems.filter((problem) => {
+          return problem.objectid === trigger.triggerid;
+        })[0];
+      }
+
+      for (const host of hosts) {
+        host.triggers = triggers.filter((trigger) => {
+          return (
+            host.hostid == trigger.hosts[0].hostid &&
+            trigger.description.indexOf("SLA") === -1
+          );
+        });
+      }
+      return hosts;
+    } catch (e) {
+      console.log(e.message);
+      throw new Error("ZABBIX_GET_GROUP_INFO_ERROR");
+    }
+  }
+  //end base section
+
+  // for HISTORY
   async getHostsByID(hostIDs) {
     try {
       const result = await axios.post(this.uri, {
@@ -250,39 +283,10 @@ class Zabbix {
       throw new Error("ZABBIX_GET_ITEMS_ERROR");
     }
   }
+  // end for History
 
-  async getSLATriggers(groupID) {
-    try {
-      const result = await axios.post(this.uri, {
-        jsonrpc: "2.0",
-        method: "trigger.get",
-        params: {
-          selectTags: "extend",
-          groupids: [groupID],
-          selectHosts: ["hostid"],
-          output: [
-            "trigerrid",
-            "description",
-            "status",
-            "lastchange",
-            "priority",
-            "state",
-            "value",
-          ],
-          tags: [{ tag: "sla", value: 1, operator: 1 }],
-          sortorder: "DESC",
-        },
-        auth: this.apiKey,
-        id: 1,
-      });
-      return result.data.result;
-    } catch (e) {
-      console.log(e.message);
-      throw new Error("ZABBIX_GET_SLATRIGGERS_ERROR");
-    }
-  }
-
-  async getService() {
+  // for SLA
+  async getService(triggerid) {
     try {
       const result = await axios.post(this.uri, {
         jsonrpc: "2.0",
@@ -298,67 +302,6 @@ class Zabbix {
     } catch (e) {
       console.log(e.message);
       throw new Error("ZABBIX_GET_SERVICE_ERROR");
-    }
-  }
-
-  async getAllServices() {
-    try {
-      const result = await axios.post(this.uri, {
-        jsonrpc: "2.0",
-        method: "service.get",
-        params: {
-          output: "extend",
-          selectDependencies: "extend",
-        },
-        auth: this.apiKey,
-        id: 1,
-      });
-      return result.data.result;
-    } catch (e) {
-      console.log(e.message);
-      throw new Error("ZABBIX_GET_ALLSERVICES_ERROR");
-    }
-  }
-
-  async getAllSLA() {
-    try {
-      let services = await this.getAllServices();
-      const result = await axios.post(this.uri, {
-        jsonrpc: "2.0",
-        method: "service.get",
-        method: "service.getsla",
-        params: {
-          intervals: [
-            {
-              from: Math.round(Date.now() / 1000) - 2592000, // 30 дней
-              to: Math.round(Date.now() / 1000),
-            },
-          ],
-        },
-        auth: this.apiKey,
-        id: 1,
-      });
-      const res = result.data.result;
-      services = services
-        .filter((item) => item.triggerid != 0)
-        .map((item) => ({
-          ...item,
-          sla: res[item.serviceid].sla[0],
-        }));
-      return services;
-    } catch (e) {
-      console.log(e.message);
-      throw new Error("ZABBIX_GET_ALL_SLA_ERROR");
-    }
-  }
-
-  async getHostInfo(hostid) {
-    try {
-      const host = await this.getHostsByID(hostid);
-      return host;
-    } catch (e) {
-      console.log.log(e.message);
-      throw new Error("ZABBIX_GET_HOSTINFO_ERROR");
     }
   }
 
@@ -447,53 +390,14 @@ class Zabbix {
       throw new Error("ZABBIX_GET_HOST_SLA_ERROR");
     }
   }
+  //end for SLA
 
-  // main result
-  async getGroupInfo(groupName) {
-    try {
-      const id = await this.getGroupID(groupName);
-      const hosts = await this.getHosts(id);
-      const sla = await this.getAllSLA(); // оптимизировать выборку
-      const slaTriggers = await this.getSLATriggers(id);
-      const triggers = await this.getTriggers(id);
-      const problems = await this.getProblems(id);
-
-      for (const trigger of triggers) {
-        trigger.problem = problems.filter((problem) => {
-          return problem.objectid === trigger.triggerid;
-        })[0];
-      }
-
-      for (const host of hosts) {
-        host.triggers = triggers.filter((trigger) => {
-          return (
-            host.hostid == trigger.hosts[0].hostid &&
-            trigger.description.indexOf("SLA") === -1
-          );
-        });
-
-        host.slaTrigger = slaTriggers.find((trigger) => {
-          return host.hostid == trigger.hosts[0].hostid;
-        });
-
-        if (host.slaTrigger) {
-          host.sla = sla.find(
-            (item) => item.triggerid === host.slaTrigger.triggerid
-          );
-        }
-      }
-      return hosts;
-    } catch (e) {
-      console.log(e.message);
-      throw new Error("ZABBIX_GET_GROUP_INFO_ERROR");
-    }
-  }
-
+  // updaters
   async updateMacros(hostid, macros) {
     try {
-      const host = await this.getHostsByID(hostid);
+      const host = await this.getHost(hostid);
       macros.forEach((element) => {
-        host[0].macros.find((macro) => macro.macro == element.macro).value =
+        host.macros.find((macro) => macro.macro == element.macro).value =
           element.value;
       });
       const result = await axios.post(this.uri, {
@@ -501,7 +405,7 @@ class Zabbix {
         method: "host.update",
         params: {
           hostid: hostid,
-          macros: [...host[0].macros],
+          macros: [...host.macros],
         },
         auth: this.apiKey,
         id: 1,

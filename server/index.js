@@ -1,29 +1,21 @@
 require("dotenv").config();
-const Zabbix = require("./lib/zabbix");
-// const express = require("express");
+const express = require("express");
+const mainController = require("./controllers/main")
+const fedController = require("./controllers/derbent")
+const crossroadsController = require("./controllers/crossroads")
+const state = require("./state")
 
-(async function () {
-    console.log('in IIFE')
-  const z = new Zabbix(
-    process.env.Z_SERVER,
-    process.env.Z_NAME,
-    process.env.Z_PASSWORD
-  );
-  await z.login();
-  const result = await z.getGroupInfo("ЦОДД");
-  console.log(result);  
-  await z.logout();
-})();
+const app = express();
+app.use(express.json());
 
+app.get("/", async (req, res) => {
+  await mainController.updateState()
+  await fedController.updateState()
+  await crossroadsController.updateState()
+  
+  res.status(200).json(state);
+});
 
-
-// const app = express();
-// app.use(express.json());
-
-// app.get("/", (req, res) => {
-//   res.json({ res: "OK" });
-// });
-
-// app.listen(process.env.EXPRESS_PORT || 3000, () => {
-//   console.log("Server started");
-// });
+app.listen(process.env.EXPRESS_PORT || 3000, () => {
+  console.log("Server started");
+});
