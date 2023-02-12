@@ -413,7 +413,7 @@ class Zabbix {
       return result.data.result;
     } catch (e) {
       console.log(e.message);
-      throw new Error("ZABBIX_GET_SLA_ERROR");
+      throw new Error("ZABBIX_UPDATE_MACROS_ERROR");
     }
   }
 }

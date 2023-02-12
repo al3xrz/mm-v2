@@ -2,7 +2,8 @@ const state = {
   rasco: {
     payload: [],
     problems: [],
-    error: null,
+    error: null, 
+    errorsCounter: 0,
     lastUpdate : 0
   },
 
@@ -10,6 +11,7 @@ const state = {
     payload: [],
     problems: [],
     error: null, 
+    errorsCounter: 0, 
     lastUpdate : 0
   },
 
@@ -17,6 +19,7 @@ const state = {
     payload: [],
     problems: [],
     error: null, 
+    errorsCounter: 0, 
     lastUpdate : 0
   },
 
@@ -24,6 +27,7 @@ const state = {
     payload: [],
     problems: [],
     error: null, 
+    errorsCounter: 0, 
     lastUpdate : 0
   },
 
@@ -31,6 +35,7 @@ const state = {
     payload: [],
     problems: [],
     error: null, 
+    errorsCounter: 0, 
     lastUpdate : 0
   },
 
@@ -38,6 +43,7 @@ const state = {
     payload: [],
     problems: [],
     error: null, 
+    errorsCounter: 0, 
     lastUpdate : 0
   },
 
@@ -45,6 +51,7 @@ const state = {
     payload: [],
     problems: [],
     error: null, 
+    errorsCounter: 0, 
     lastUpdate : 0
   },
 
@@ -52,6 +59,7 @@ const state = {
     payload: [],
     problems: [],
     error: null, 
+    errorsCounter: 0, 
     lastUpdate : 0
   },
 
@@ -59,6 +67,7 @@ const state = {
     payload: [],
     problems: [],
     error: null, 
+    errorsCounter: 0, 
     lastUpdate : 0
   },
 
@@ -66,6 +75,7 @@ const state = {
     payload: [],
     problems: [],
     error: null, 
+    errorsCounter: 0, 
     lastUpdate : 0
   },
 
@@ -73,6 +83,15 @@ const state = {
     payload: [],
     problems: [],
     error: null, 
+    errorsCounter: 0, 
+    lastUpdate : 0
+  },
+
+  pvfDisabled: {
+    payload: [],
+    problems: [],
+    error: null, 
+    errorsCounter: 0, 
     lastUpdate : 0
   },
 
@@ -80,6 +99,7 @@ const state = {
     payload: [],
     problems: [],
     error: null, 
+    errorsCounter: 0, 
     lastUpdate : 0
   },
 
@@ -87,6 +107,15 @@ const state = {
     payload: [],
     problems: [],
     error: null, 
+    errorsCounter: 0, 
+    lastUpdate : 0
+  },
+
+  videoDisabled: {
+    payload: [],
+    problems: [],
+    error: null, 
+    errorsCounter: 0, 
     lastUpdate : 0
   },
 
@@ -94,6 +123,7 @@ const state = {
     payload: [],
     problems: [],
     error: null, 
+    errorsCounter: 0, 
     lastUpdate : 0
   },
 
@@ -101,6 +131,7 @@ const state = {
     payload: [],
     problems: [],
     error: null, 
+    errorsCounter: 0, 
     lastUpdate : 0
   },
 };

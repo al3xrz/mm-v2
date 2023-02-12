@@ -1,3 +1,7 @@
+function delay(ms) {
+    return new Promise(resolve => setTimeout(() => resolve(), ms))
+}
+
 function uptimeToString(uptime) {
     let totalSeconds = uptime;
     let days = Math.floor(totalSeconds / 86400);
@@ -28,5 +32,6 @@ function unixTimeToString(unixtime) {
 
 module.exports = {
     uptimeToString,
-    unixTimeToString
+    unixTimeToString,
+    delay
 }

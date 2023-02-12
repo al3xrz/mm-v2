@@ -1,4 +1,4 @@
-const Zabbix = require("../../lib/zabbix");
+const Zabbix = require("../../../lib/zabbix");
 const { simpleGroup } = require("./helpers");
 
 class MainController {
@@ -24,8 +24,10 @@ class MainController {
       await simpleGroup(this.zabbix, "УпрДор", "uprdor");
       await simpleGroup(this.zabbix, "УпрДор_21.10.22", "uprdorNew");
       await simpleGroup(this.zabbix, "Комплексы ФВФ", "pvf");
+      await simpleGroup(this.zabbix, "Комплексы ФВФ отключенные", "pvfDisabled");
       await simpleGroup(this.zabbix, "ЦОДД", "pvfNew");
       await simpleGroup(this.zabbix, "Аналитика", "video");
+      await simpleGroup(this.zabbix, "Аналитика_Отключенные", "videoDisabled");
     } catch (e) {
       console.log(e);
     } finally {

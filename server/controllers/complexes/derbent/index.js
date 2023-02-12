@@ -1,4 +1,4 @@
-const Zabbix = require("../../lib/zabbix");
+const Zabbix = require("../../../lib/zabbix");
 const { complexGroup } = require("./helpers");
 
 // контроллер федерального сервера видеоаналитики

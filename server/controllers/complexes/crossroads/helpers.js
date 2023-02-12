@@ -1,5 +1,5 @@
-const state = require("../../state");
-const { itemsNormalizer } = require("../../lib/utils/items");
+const state = require("../../../state");
+const { itemsNormalizer } = require("../../../lib/utils/items");
 
 async function complexGroup(zabbix, markerGroup, complexGroup, stateName) {
   try {
@@ -58,12 +58,15 @@ async function complexGroup(zabbix, markerGroup, complexGroup, stateName) {
 
     state[stateName].payload = markers;
     state[stateName].error = null;
+    state[stateName].errorsCounter = 0;
   } catch (e) {
     console.log(e);
     state[stateName].payload = [];
     state[
       stateName
     ].error = `Ошибка получения списка ${markerGroup} ${complexGroup}`;
+    state[stateName].errorsCounter++;
+
     return [];
   } finally {
     state[stateName].lastUpdate = +new Date();
