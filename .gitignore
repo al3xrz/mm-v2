@@ -2,6 +2,8 @@ public/aimg/320x240
 public/zshare/skat-img
 
 .env
+.sqlite
+
 
 # Logs
 logs

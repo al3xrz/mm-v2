@@ -1,5 +1,5 @@
-const { Role, sequelize} = require('../models/User.model')
-const { Op } = require("sequelize") 
+const { Role, sequelize } = require('../../models/User.model');
+const { Op } = require("sequelize");
 
 
 async function editRole(role) {
@@ -98,11 +98,16 @@ async function getRoles() {
 
 
 async function createRole(role) {
-    
+
     console.log(role)
     if (role.name == '' || role.name == null) {
         throw { message: 'Не заполнены обязательные поля' }
     }
+    
+    if (!role.comments) {
+        role.comments = "";
+    }
+
     await sequelize.sync()
 
     const currentRoles = await Role.findAll({
