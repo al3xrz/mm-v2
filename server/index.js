@@ -3,6 +3,8 @@ const { updateState } = require("./controllers/complexes");
 const express = require("express");
 
 const rolesRouter = require("./routes/roles");
+const usersRouter = require("./routes/users");
+
 
 const app = express();
 
@@ -15,7 +17,7 @@ app.get("/", async (req, res) => {
 });
 
 app.use("/api/roles", rolesRouter);
-
+app.use("/api/users", usersRouter);
 
 
 
