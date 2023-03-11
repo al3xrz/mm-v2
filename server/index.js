@@ -2,8 +2,9 @@ require("dotenv").config();
 const { updateState } = require("./controllers/complexes");
 const express = require("express");
 
-const rolesRouter = require("./routes/roles");
-const usersRouter = require("./routes/users");
+const rolesRouter = require("./routes/roles.router");
+const usersRouter = require("./routes/users.router");
+const authRouter = require("./routes/auth.router")
 
 
 const app = express();
@@ -16,8 +17,10 @@ app.get("/", async (req, res) => {
   res.sendFile("/index.html");
 });
 
+app.use("/api/auth")
 app.use("/api/roles", rolesRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/auth", authRouter);
 
 
 
