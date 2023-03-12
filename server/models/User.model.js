@@ -6,13 +6,12 @@ const sequelize = new Sequelize({
     storage: path.resolve('base.sqlite')
 });
 
-
 const Role = sequelize.define('Roles', {
     name: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    
+
     comments: {
         type: DataTypes.STRING,
         allowNull: true
